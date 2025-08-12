@@ -34,10 +34,9 @@ export const flowerPositions = (k: KAPLAYCtx) => {
 export const flowerSize = { w: 100, h: 100 }
 
 
+let flowerCount = 0
 export const createFlower = (k: KAPLAYCtx) => {
     const { name, shape } = k.choose(flowerTypes) as typeof flowerTypes[number]
-
-
 
     const flower = k.add([
         'flower',
@@ -62,6 +61,9 @@ export const createFlower = (k: KAPLAYCtx) => {
 
 function getRandomPosition(k: KAPLAYCtx) {
     const positions = Object.values(flowerPositions(k))
-    const newPos = k.choose(positions)
+    // const newPos = k.choose(positions)
+    const newPos = positions[flowerCount]
+    flowerCount++
+
     return k.vec2(newPos.x, newPos.y)
 }
