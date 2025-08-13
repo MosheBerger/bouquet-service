@@ -1,5 +1,6 @@
 import config from './config';
-import { createFlower } from './gameObjects/flower';
+import { createFlowerpot } from './gameObjects/flower';
+import { createHand } from './gameObjects/hand';
 import loadAssets from './loadAssets'
 
 
@@ -10,9 +11,22 @@ k.add([
     k.rect(k.width(), k.height())
 ])
 
-createFlower(k)
-createFlower(k)
-createFlower(k)
-createFlower(k)
-createFlower(k)
-createFlower(k)
+const hand = createHand(k)
+
+const flowerPots = new Array(6).fill(0).map(f=>{
+    const fp = createFlowerpot(k)
+    fp.gameObject.onClick(()=>{
+        if (hand.isFull()) return k.debug.log('full')
+
+        const type = fp.pickFlower()
+        if (!type) return
+
+        hand.addFlower(type)
+    })
+})
+
+
+
+k.onClick('flowerpot', (flowerpot) => {
+    // hand.addFlower(flowerpot.)
+})

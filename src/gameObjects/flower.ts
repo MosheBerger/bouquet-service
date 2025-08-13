@@ -1,6 +1,5 @@
 import type { KAPLAYCtx } from "kaplay";
 
-
 export const flowerTypes = [
     {
         name: 'ada',
@@ -31,39 +30,72 @@ export const flowerPositions = (k: KAPLAYCtx) => {
         vas6: { x: width * 0.8, y: height * 0.9 },
     }
 }
-export const flowerSize = { w: 100, h: 100 }
+export const flowerpotSize = { w: 100, h: 100 }
+export const DEFAULT_FLOWER_AMOUNT = 3
 
+let flowerpotCount = 0
+export const createFlowerpot = (k: KAPLAYCtx) => {
+    const { name: flowerName, shape } = k.choose(flowerTypes) as typeof flowerTypes[number]
 
-let flowerCount = 0
-export const createFlower = (k: KAPLAYCtx) => {
-    const { name, shape } = k.choose(flowerTypes) as typeof flowerTypes[number]
-
-    const flower = k.add([
-        'flower',
-        {
-            name,
-        },
-        k.rect(flowerSize.w, flowerSize.h),
-        k.pos(getRandomPosition(k)),
+    const flowerpot = k.add([
+        'flowerpot',
+        k.rect(flowerpotSize.w, flowerpotSize.h),
+        k.pos(calcPosition(k)),
         k.color(k[shape]),
         k.anchor('center'),
-        k.area()
+        k.area(),
+        {
+            flowerName,
+            amount: DEFAULT_FLOWER_AMOUNT
+        },
     ])
 
-    flower.onClick(() => {
-        k.debug.log(`flower ${name} ${shape} clicked`)
-    })
+    const text = flowerpot.add([
+        k.text(flowerpot.amount.toString())
+    ])
+    const updateText = () => {
+        text.text = flowerpot.amount.toString()
+    }
 
+    const pickFlower = () => {
+        if (flowerpot.amount <= 0) {
+            return k.debug.log('empty')
+        }
 
-    return flower
+        k.debug.log(`pick ${flowerName}`)
+        flowerpot.amount--
+        updateText()
+        return flowerName
+    }
+
+    const putFlower = (newFlower: FlowerName) => {
+        if (newFlower !== flowerName) {
+            return k.debug.log('not same type')
+        }
+
+        k.debug.log(`put ${flowerName}`)
+        flowerpot.amount++
+        updateText()
+    }
+
+    // flowerpot.onClick(()=>{
+    //     pickFlower()
+    // })
+
+    return {
+        type: flowerName,
+        pickFlower,
+        putFlower,
+        gameObject: flowerpot,
+    }
 }
 
 
-function getRandomPosition(k: KAPLAYCtx) {
+function calcPosition(k: KAPLAYCtx) {
     const positions = Object.values(flowerPositions(k))
     // const newPos = k.choose(positions)
-    const newPos = positions[flowerCount]
-    flowerCount++
+    const newPos = positions[flowerpotCount]
+    flowerpotCount++
 
     return k.vec2(newPos.x, newPos.y)
 }

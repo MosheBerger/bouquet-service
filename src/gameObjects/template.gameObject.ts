@@ -1,6 +1,6 @@
 import type { KAPLAYCtx } from "kaplay";
 
-export const someGameObject = (k: KAPLAYCtx) => {
+export const createGameObject = (k: KAPLAYCtx) => {
     const gameObject = k.add([
         'gameObject',
         // comp1
